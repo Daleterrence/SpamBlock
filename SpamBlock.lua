@@ -9,11 +9,11 @@ require('luau')
 packets = require('packets')
 
 local block_skillup = true -- Setting to true blocks item-use events from skill-up book items. 
-local blacklist = T{'Frededde','Comedie','Boamna','Thanatoss','Lowesquadone','Justchao','Jamiei','Bazzarcat','Aboschitt'} -- Blocks all messages from defined player-characters entered here, E.G. 'Spammerguy','Badguy', etc. 
+local blacklist = T{'Frededde','Comedie','Boamna','Thanatoss','Lowesquadone','Justchao','Jamiei','Bazzarcat','Aboschitt','Wooohoo'} -- Blocks all messages from defined player-characters entered here, E.G. 'Spammerguy','Badguy', etc. 
 
 -- Blacklist Reasons:
 -- Frededde - Racist, sexist, asshole.
--- Comedie, Boamna, Thanatoss, Lowesquadone, Justchao, Jamiei, Bazzarcat, Aboschitt - Mercing
+-- Comedie, Boamna, Thanatoss, Lowesquadone, Justchao, Jamiei, Bazzarcat, Aboschitt, Wooohoo - Mercing
 
 local black_listed_words = T{string.char(0x81,0x69),string.char(0x81,0x99),string.char(0x81,0x9A),'CP500p','2100p','ML0-20/15m','New2025','V0toV25', '3M/run', '3M/hour'} -- Be careful adding terms unless you want to accidentally neuter shout and yell chat.
 -- {string.char(0x81,0x69),string.char(0x81,0x99),string.char(0x81,0x9A),'1%-99','Job Points.*2100','Job Points.*500','Job Points.*4m','JP.*2100','JP.*500','Capacity Points.*2100','Capacity Points.*500','CPS*.*2100','CPS*.*500','ｆｆｘｉｓｈｏｐ','Jinpu 99999','Jinpu99999','This is IGXE','Clear Mind*.*15mins rdy start','Reisenjima*.*Helms*.*T4*.*Buy','Aeonic Weapon*.*3zone*.*Buy','Tumult Curator*.*Kill','Aeonic Weapon*.*Mind','Aeonic Weapon*.*Buy','Selling Aeonic','Empy Weapons Abyssea','50 50 75'} - First two are '☆' and '★' symbols. Currently unused terms, only grab the lot if you're on Asura. 
