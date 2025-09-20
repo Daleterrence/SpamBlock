@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.0.0'
+_addon.version = '1.0.1'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'} -- To be used for upcoming commands.
 
@@ -61,7 +61,7 @@ windower.register_event('load', function()
     end
 end)
 
-local blacklist = T{'Frededde','Comedie','Boamna','Thanatoss','Lowesquadone','Justchao','Jamiei','Bazzarcat','Aboschitt','Wooohoo','Aeoniczaca','Yagwick','Criofan','Attkins','Yagwica'} -- Blocks all messages from defined player-characters entered here, E.G. 'Spammerguy','Badguy', etc. 
+local blacklist = T{'Comedie','Boamna','Thanatoss','Lowesquadone','Justchao','Jamiei','Bazzarcat','Aboschitt','Wooohoo','Aeoniczaca','Yagwick','Criofan','Attkins','Yagwica'} -- Blocks all messages from defined player-characters entered here, E.G. 'Spammerguy','Badguy', etc. 
 
 local black_listed_words = T{string.char(0x81,0x69),string.char(0x81,0x99),string.char(0x81,0x9A),'CP500p','2100p','ML0-20/15m','New2025','V0toV25', '3M/run', '3M/hour', 'Aeonic Weapon*.*Mind','2100/20M','T1T2T3T4'} -- Strings the addon will look for in yell and shout chat, and block appropriately.
 -- Example Strings:
