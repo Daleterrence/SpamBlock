@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.0.3'
+_addon.version = '1.0.4'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'} -- To be used for upcoming commands.
 
@@ -39,7 +39,7 @@ windower.register_event('load', function()
         get_txt(version_url, function(response, code, body)
             if code == 200 then
                 version = body:match(version_pattern)
-                    if version and version ~= _addon.version then
+                    if version and version > _addon.version then
                     windower.add_to_chat(207, _addon.name .. ": new version found (%s -> %s), updating.":format(_addon.version, version))
                     -- Open the file in write mode
                     local file = io.open(file_path, "w")
