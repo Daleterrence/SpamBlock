@@ -37,3 +37,8 @@ The settings file allows you to enable or disable which modules of the addon are
 * After an extended period of time in the same zone, SpamBlock will cease functioning.
 
   * This is an issue with Windower itself, after about 6 hours in a zone, the packet handler falls over and dies, only fix I'm currently aware of is to reload the addon.
+
+### Credits
+
+- Chiaia for [FuckOff](https://github.com/Chiaia/Windower-4-Addons/blob/main/fuckoff/fuckoff.lua), the addon this code is based on.
+- Lili for the auto-updating code, found in [Readable](https://github.com/lili-ffxi/FFXI-Addons/blob/master/readable/readable.lua).
