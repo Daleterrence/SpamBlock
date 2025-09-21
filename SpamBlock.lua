@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.0.4'
+_addon.version = '1.0.51'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'} -- To be used for upcoming commands.
 
