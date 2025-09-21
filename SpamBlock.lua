@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.1.51'
+_addon.version = '1.1.52'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'} -- To be used for upcoming commands.
 
@@ -40,22 +40,22 @@ windower.register_event('load', function()
             if code == 200 then
                 version = body:match(version_pattern)
                     if version and version > _addon.version then
-                    windower.add_to_chat(207,"[".. _addon.name .. "]: New version found (%s → %s), updating.":format(_addon.version, version))
+                    windower.add_to_chat(207,"[".. _addon.name .. "] New version found (%s -> %s), updating.":format(_addon.version, version))
                     -- Open the file in write mode
                     local file = io.open(file_path, "w")
                     -- Check if the file was opened successfully
                     if file then
                         file:write(body)  -- Write the content to the file
                         file:close()         -- Close the file
-                        windower.add_to_chat(207,"[".. _addon.name .. "]: Update successful, reloading.")
+                        windower.add_to_chat(207,"[".. _addon.name .. "] Update successful, reloading.")
                         send_command('@wait 0.5;lua reload ' .. _addon.name)
                         return
                     else
-                        windower.add_to_chat(207,"[".. _addon.name .."]: Failed to open file: " .. file_path)
+                        windower.add_to_chat(207,"[".. _addon.name .."] Failed to open file: ".. file_path)
                     end
                 end
             else
-                windower.add_to_chat(207,"[".. _addon.name .. ": " .. code .. " Failed to get file.")
+                windower.add_to_chat(207,"[".. _addon.name .."]".. code .." Failed to get file.")
             end
         end)
     end
