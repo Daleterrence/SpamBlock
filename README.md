@@ -11,6 +11,7 @@ A Windower 4 addon to make yell chat usable. Originally "[FuckOff](https://githu
 The addon is designed to be set-and-forget. Filters are manually updated by me and currently designed for use on the Bahamut World to prevent the sea of spam we've been getting recently related to RMT and mercing.
 
 
+
 **This addon will auto-update as new versions are released, and the filters are updated.**
 
 The settings file allows you to enable or disable which modules of the addon are used;
@@ -40,5 +41,5 @@ The settings file allows you to enable or disable which modules of the addon are
 
 ### Credits
 
-- Chiaia for [FuckOff](https://github.com/Chiaia/Windower-4-Addons/blob/main/fuckoff/fuckoff.lua), the addon this code is based on.
-- Lili for the auto-updating code, found in [Readable](https://github.com/lili-ffxi/FFXI-Addons/blob/master/readable/readable.lua).
+* Chiaia for [FuckOff](https://github.com/Chiaia/Windower-4-Addons/blob/main/fuckoff/fuckoff.lua), the code this addon is based on.
+* Lili for the auto-updating code, found in [Readable](https://github.com/lili-ffxi/FFXI-Addons/blob/master/readable/readable.lua).
