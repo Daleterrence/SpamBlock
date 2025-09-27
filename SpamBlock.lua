@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.2.85'
+_addon.version = '1.3.0'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'} -- To be used for upcoming commands.
 
@@ -62,6 +62,7 @@ function check_for_update()
 end
 windower.register_event('load', check_for_update)
 windower.register_event('lose focus', check_for_update)
+windower.register_event('gain focus', check_for_update)
 windower.register_event('weather change', check_for_update)
 
 local blacklist = T{'Comedie','Boamna','Thanatoss','Lowesquadone','Justchao','Jamiei','Bazzarcat','Aboschitt','Wooohoo','Aeoniczaca','Aeoniczzzcq','Yagwick','Criofan','Attkins','Yagwica','Senaki','Killera','Killerfa','Xxzzgorun','Deshutzn','Pangge','Yagwicc','Killerfd'} -- Blocks all messages from defined player-characters entered here, E.G. 'Spammerguy','Badguy', etc. 
