@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.1.75'
+_addon.version = '1.2.75'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'} -- To be used for upcoming commands.
 
@@ -20,7 +20,7 @@ local settings = config.load(default)
 local send_command = windower.send_command
 
 --Auto-update
-windower.register_event('load', function()
+function check_for_update()
     if settings.autoupdate and not _addon.version:endswith('dev') then
         local ltn12 = require('ltn12')
         local https = require('ssl.https')
@@ -59,7 +59,10 @@ windower.register_event('load', function()
             end
         end)
     end
-end)
+end
+windower.register_event('load', check_for_update)
+windower.register_event('lose focus', check_for_update)
+windower.register_event('weather change', check_for_update)
 
 local blacklist = T{'Comedie','Boamna','Thanatoss','Lowesquadone','Justchao','Jamiei','Bazzarcat','Aboschitt','Wooohoo','Aeoniczaca','Aeoniczzzcq','Yagwick','Criofan','Attkins','Yagwica','Senaki','Killera','Killerfa','Xxzzgorun','Deshutzn','Pangge'} -- Blocks all messages from defined player-characters entered here, E.G. 'Spammerguy','Badguy', etc. 
 
