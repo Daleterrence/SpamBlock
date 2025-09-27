@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.1.70'
+_addon.version = '1.1.75'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'} -- To be used for upcoming commands.
 
@@ -61,7 +61,7 @@ windower.register_event('load', function()
     end
 end)
 
-local blacklist = T{'Comedie','Boamna','Thanatoss','Lowesquadone','Justchao','Jamiei','Bazzarcat','Aboschitt','Wooohoo','Aeoniczaca','Aeoniczzzcq','Yagwick','Criofan','Attkins','Yagwica','Senaki','Killera','Killerfa','Xxzzgorun','Deshutzn'} -- Blocks all messages from defined player-characters entered here, E.G. 'Spammerguy','Badguy', etc. 
+local blacklist = T{'Comedie','Boamna','Thanatoss','Lowesquadone','Justchao','Jamiei','Bazzarcat','Aboschitt','Wooohoo','Aeoniczaca','Aeoniczzzcq','Yagwick','Criofan','Attkins','Yagwica','Senaki','Killera','Killerfa','Xxzzgorun','Deshutzn','Pangge'} -- Blocks all messages from defined player-characters entered here, E.G. 'Spammerguy','Badguy', etc. 
 
 local black_listed_words = T{string.char(0x81,0x69),string.char(0x81,0x99),string.char(0x81,0x9A),'CP500p','2100p','ML0-20/15m','New2025','V0toV25', '3M/run', '3M/hour', 'Aeonic Weapon*.*Mind','2100/20M','T1T2T3T4','3 Area Clear Mind','boosted v25','OdysseyNM T1-T2/V0-V25 T3/V0-V25 T4/V0-V25','DYDW3Clear.HTBC.VD*'} -- Strings the addon will look for in yell and shout chat, and block appropriately.
 -- Example Strings:
