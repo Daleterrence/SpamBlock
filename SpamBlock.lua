@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.3.50'
+_addon.version = '1.3.55'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'} -- To be used for upcoming commands.
 
@@ -38,7 +38,7 @@ function check_for_update()
                 callback(response, code, body)
             end, 1)
         end
-        local version_url = 'https://raw.githubusercontent.com/Daleterrence/SpamBlock/refs/heads/main/SpamBlock.lua'
+        local version_url = "https://raw.githubusercontent.com/Daleterrence/SpamBlock/refs/heads/main/SpamBlock.lua"
         local version_pattern = "_addon.version *= *['\"](.-)['\"]"
         local file_path = addon_path .. "SpamBlock.lua"
         get_txt(version_url, function(response, code, body)
