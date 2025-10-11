@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.3.65'
+_addon.version = '1.3.70'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'} -- To be used for upcoming commands.
 
@@ -72,9 +72,9 @@ register_event('lose focus', check_for_update)
 register_event('gain focus', check_for_update)
 register_event('weather change', check_for_update)
 
-local blacklist = T{'Comedie','Boamna','Thanatoss','Lowesquadone','Justchao','Jamiei','Bazzarcat','Aboschitt','Wooohoo','Aeoniczaca','Aeoniczzzcq','Yagwick','Criofan','Attkins','Yagwica','Killera','Killerfa','Xxzzgorun','Deshutzn','Pangge','Yagwicc','Killerfd','Chirich','Kettica','Woohooc','Xxzagorun','Yagwicb','Killerfg'} -- Blocks all messages from defined player-characters entered here, E.G. 'Spammerguy','Badguy', etc. 
+local blacklist = T{'Panggeb','Comedie','Boamna','Thanatoss','Lowesquadone','Justchao','Jamiei','Bazzarcat','Aboschitt','Wooohoo','Aeoniczaca','Aeoniczzzcq','Yagwick','Criofan','Attkins','Yagwica','Killera','Killerfa','Xxzzgorun','Deshutzn','Pangge','Yagwicc','Killerfd','Chirich','Kettica','Woohooc','Xxzagorun','Yagwicb','Killerfg'} -- Blocks all messages from defined player-characters entered here, E.G. 'Spammerguy','Badguy', etc. 
 
-local black_listed_words = T{string.char(0x81,0x69),string.char(0x81,0x99),string.char(0x81,0x9A),'CP500p','2100p','ML0-20/15m','New2025','V0toV25', '3M/run','3M/hour','Aeonic Weapon*.*Mind','2100/20M','T1T2T3T4','3 Area Clear Mind','OdysseyNM','DYD W3','Dynamis*.*Buy?','unity.Master','43K+','Ambuscade*.*10M/run','DYDW3Clear.HTBC.VD.do you need it?buy?','OmenOdysseySeg11k'} -- Strings the addon will look for in yell and shout chat, and block appropriately.
+local black_listed_words = T{string.char(0x81,0x69),string.char(0x81,0x99),string.char(0x81,0x9A),'CP500p','2100p','ML0-20/15m','New2025','V0toV25', '3M/run','3M/hour','Aeonic Weapon*.*Mind','2100/20M','T1T2T3T4','3 Area Clear Mind','OdysseyNM','DYD W3','Dynamis*.*Buy?','unity.Master','43K+','Ambuscade*.*10M/run','DYDW3Clear.HTBC.VD.do you need it?buy?','OmenOdysseySeg11k','DYDW3Clear'} -- Strings the addon will look for in yell and shout chat, and block appropriately.
 
 -- Example Strings:
  --'1%-99','Job Points.*2100','Job Points.*500','Job Points.*4m','JP.*2100','JP.*500','Capacity Points.*2100','Capacity Points.*500','CPS*.*2100','CPS*.*500','ｆｆｘｉｓｈｏｐ','Jinpu 99999','Jinpu99999','This is IGXE','Clear Mind*.*15mins rdy start','Reisenjima*.*Helms*.*T4*.*Buy','Aeonic Weapon*.*3zone*.*Buy','Tumult Curator*.*Kill','Aeonic Weapon*.*Mind',.*Buy','Selling Aeonic','Empy Weapons Abyssea','50 50 75' - First two are '☆' and '★' symbols.
