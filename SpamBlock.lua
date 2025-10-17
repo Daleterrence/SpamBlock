@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.4.0'
+_addon.version = '1.4.1'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'}
 
@@ -24,6 +24,7 @@ local settings = config.load(default)
 local send_command = windower.send_command
 local convert_auto_trans = windower.convert_auto_trans
 local addon_path = windower.addon_path
+local last_update_check = 0
 
 -- Convert version string
 local function version_to_num(v)
