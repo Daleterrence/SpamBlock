@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.4.40'
+_addon.version = '1.4.45'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'}
 
@@ -26,16 +26,36 @@ local convert_auto_trans = windower.convert_auto_trans
 local addon_path = windower.addon_path
 local last_update_check = 0
 
--- Convert version string
-local function version_to_num(v)
-    local num = v:match("([%d%.]+)")
-    return tonumber((num or "0"):gsub("%.", "")) or 0
+-- Version helpers (robust semantic comparison)
+local function _sanitize_version(v)
+    local s = ''
+    if v ~= nil then
+        s = tostring(v):match("([%d%.]+)") or ''
+    end
+    local parts = {}
+    for seg in s:gmatch('%d+') do
+        parts[#parts+1] = tonumber(seg) or 0
+    end
+    return parts
+end
+
+local function compare_versions(a, b)
+    local pa, pb = _sanitize_version(a), _sanitize_version(b)
+    local n = math.max(#pa, #pb)
+    for i = 1, n do
+        local va = pa[i] or 0
+        local vb = pb[i] or 0
+        if va ~= vb then
+            return (va > vb) and 1 or -1
+        end
+    end
+    return 0
 end
 
 -- Auto-updating check
-function check_for_update(manual)
+function check_for_update(manual, force)
     if not settings.autoupdate and not manual then return end
-    if _addon.version:endswith('dev') then return end
+    if not force and _addon.version:endswith('dev') then return end
     if not manual and os.time() - last_update_check < 600 then return end
     last_update_check = os.time()
 
@@ -47,7 +67,7 @@ function check_for_update(manual)
     local ok_https, https = pcall(require, 'ssl.https')
     if not ok_ltn12 or not ok_https or not https then
         if manual then
-            add_to_chat(123, prefix .. 'Update check failed. HTTPS library not available in this Windower build.')
+            add_to_chat(123, prefix .. 'Update check failed. Your Windower installation is missing required libraries.')
         end
         return
     end
@@ -77,16 +97,26 @@ function check_for_update(manual)
             return
         end
 
-        local body = table.concat(buffer)
-        local remote_version = body:match(version_pattern)
+    local body = table.concat(buffer)
+    local remote_version = body:match(version_pattern)
 
         if not remote_version then
-            if manual then add_to_chat(123, prefix .. 'Unable to read github version.') end
+            if manual then add_to_chat(123, prefix .. 'Update check failed. Unable to read GitHub version.') end
             return
         end
 
-        if version_to_num(remote_version) > version_to_num(_addon.version) then
-            add_to_chat(36, prefix .. ('New version found (v%s), updating from v%s.'):format(remote_version, _addon.version))
+        if manual then
+            add_to_chat(36, prefix .. ('Comparing github file (v%s) to your local file (v%s)...'):format(remote_version or 'n/a', _addon.version or 'n/a'))
+        end
+
+        local should_update = force or (compare_versions(remote_version, _addon.version) == 1)
+
+        if should_update then
+            if force then
+                add_to_chat(36, prefix .. ('Force updating to GitHub version (v%s).'):format(remote_version or 'unknown'))
+            else
+                add_to_chat(36, prefix .. ('New version found (v%s), updating from v%s.'):format(remote_version, _addon.version))
+            end
 
             local file_buffer = {}
             local _, full_code = https.request{
@@ -188,12 +218,18 @@ windower.register_event('addon command', function(command, ...)
         add_to_chat(36, ('- '):color(36)..('list '):color(206)..('- Lists your blacklist and filter list.'):color(36))
         add_to_chat(36, ('- '):color(36)..('autoupdate '):color(206)..('- Toggles autoupdates on/off.'):color(36))
 		add_to_chat(36, ('- '):color(36)..('update '):color(206)..('- Manually checks for updates.'):color(36))
+        add_to_chat(36, ('- '):color(36)..('forceupdate '):color(206)..('- Force download the latest version.'):color(36))
         add_to_chat(36, ('- '):color(36)..('interval '):color(206).. ('<min> '):color(160)..('- Changes how often SpamBlock looks for updates, minimum of 5'):color(36))
         return
     end
 
     if command == 'update' then
-        check_for_update(true)
+        check_for_update(true, false)
+        return
+    end
+
+    if command == 'forceupdate' then
+        check_for_update(true, true)
         return
     end
 
