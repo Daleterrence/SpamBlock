@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.4.2'
+_addon.version = '1.4.40'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'}
 
@@ -39,11 +39,21 @@ function check_for_update(manual)
     if not manual and os.time() - last_update_check < 600 then return end
     last_update_check = os.time()
 
-    local ltn12 = require('ltn12')
-    local https = require('ssl.https')
-
+    -- Build prefix first so we can log even if HTTPS libs aren't available
     local prefix = ('['):color(36)..('SpamBlock'):color(38)..('] '):color(36)
-    local version_url = "https://raw.githubusercontent.com/Daleterrence/SpamBlock/refs/heads/main/SpamBlock.lua"
+
+    -- Load networking libs defensively; some Windower installs may lack luasec
+    local ok_ltn12, ltn12 = pcall(require, 'ltn12')
+    local ok_https, https = pcall(require, 'ssl.https')
+    if not ok_ltn12 or not ok_https or not https then
+        if manual then
+            add_to_chat(123, prefix .. 'Update check failed. HTTPS library not available in this Windower build.')
+        end
+        return
+    end
+
+    -- Correct raw URL format: owner/repo/branch/path
+    local version_url = "https://raw.githubusercontent.com/Daleterrence/SpamBlock/main/SpamBlock.lua"
     local version_pattern = "_addon.version%s*=%s*['\"](.-)['\"]"
     local file_path = addon_path .. "SpamBlock.lua"
 
@@ -56,7 +66,7 @@ function check_for_update(manual)
         local _, code = https.request{
             url = version_url,
             method = "GET",
-            headers = { Range = "bytes=0-2047" },
+            headers = { ['User-Agent'] = 'SpamBlock/' .. tostring(_addon.version), Range = "bytes=0-2047" },
             sink = ltn12.sink.table(buffer)
         }
 
@@ -82,6 +92,7 @@ function check_for_update(manual)
             local _, full_code = https.request{
                 url = version_url,
                 method = "GET",
+                headers = { ['User-Agent'] = 'SpamBlock/' .. tostring(_addon.version) },
                 sink = ltn12.sink.table(file_buffer)
             }
 
@@ -102,7 +113,7 @@ function check_for_update(manual)
                     send_command('@wait 0.5;lua reload ' .. _addon.name)
                     return
                 else
-                    add_to_chat(123, prefix .. ('Update failed. Cannot read:'):color(123).. file_path)
+                    add_to_chat(123, prefix .. ('Update failed. Cannot write: '):color(123).. file_path)
                 end
             else
                 add_to_chat(123, prefix .. 'Update failed. Github cannot be reached at this time.')
