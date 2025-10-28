@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.4.45'
+_addon.version = '1.4.46'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'}
 
@@ -25,8 +25,7 @@ local send_command = windower.send_command
 local convert_auto_trans = windower.convert_auto_trans
 local addon_path = windower.addon_path
 local last_update_check = 0
-
--- Version helpers (robust semantic comparison)
+-- Version comparison functions
 local function _sanitize_version(v)
     local s = ''
     if v ~= nil then
@@ -59,10 +58,9 @@ function check_for_update(manual, force)
     if not manual and os.time() - last_update_check < 600 then return end
     last_update_check = os.time()
 
-    -- Build prefix first so we can log even if HTTPS libs aren't available
     local prefix = ('['):color(36)..('SpamBlock'):color(38)..('] '):color(36)
 
-    -- Load networking libs defensively; some Windower installs may lack luasec
+    -- Handling incase someone's Windower install is borked
     local ok_ltn12, ltn12 = pcall(require, 'ltn12')
     local ok_https, https = pcall(require, 'ssl.https')
     if not ok_ltn12 or not ok_https or not https then
@@ -72,7 +70,6 @@ function check_for_update(manual, force)
         return
     end
 
-    -- Correct raw URL format: owner/repo/branch/path
     local version_url = "https://raw.githubusercontent.com/Daleterrence/SpamBlock/main/SpamBlock.lua"
     local version_pattern = "_addon.version%s*=%s*['\"](.-)['\"]"
     local file_path = addon_path .. "SpamBlock.lua"
