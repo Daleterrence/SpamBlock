@@ -29,6 +29,8 @@ All commands use **//sbl** or **//spamblock**.
   * Toggles auto-updates on/off. Please keep in mind that turning off auto-updates will mean you will be required to maintain your own blacklist and filters, and you will not receive any updates from this repo until you re-enable it.
 * **update**
   * Manually checks for updates.
+* **forceupdate**
+  * Forces the addon to download the latest version from this repo, regardless of what version number it is. This should be used in cases something has gone wrong.
 * **interval** <*min*>
   * Changes how often SpamBlock runs a check for updates, minimum of 5 minutes, the default is 15 minutes. You can use this command to finetune how often you want the game to check for updates, if the preset time is too often or not often enough for your preference.
 
