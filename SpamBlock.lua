@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.4.1'
+_addon.version = '1.4.2'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'}
 
@@ -129,9 +129,9 @@ end)
 add_to_chat(36, ('['):color(36)..('SpamBlock'):color(38)..('] '):color(36)..('Addon successfully loaded.'):color(36))
 
 -- Filtered characters you will not see in any chat if blist option is enabled in settings.
-local blacklist = T{'Noke','Panggeb','Comedie','Boamna','Thanatoss','Lowesquadone','Justchao','Jamiei','Bazzarcat','Aboschitt','Wooohoo','Aeoniczaca','Aeoniczzzcq','Yagwick','Criofan','Attkins','Yagwica','Killera','Killerfa','Xxzzgorun','Deshutzn','Pangge','Yagwicc','Killerfd','Chirich','Kettica','Woohooc','Xxzagorun','Yagwicb','Killerfg'}
+local blacklist = T{'Noke','Panggeb','Comedie','Boamna','Thanatoss','Lowesquadone','Justchao','Jamiei','Bazzarcat','Aboschitt','Wooohoo','Aeoniczaca','Aeoniczzzcq','Yagwick','Criofan','Attkins','Yagwica','Killera','Killerfa','Xxzzgorun','Deshutzn','Pangge','Yagwicc','Killerfd','Chirich','Kettica','Woohooc','Xxzagorun','Yagwicb','Killerfg','Yagwicf'}
 -- Filters a shout or yell if they contain any of these strings, if the rmt option is enabled in settings.
-local black_listed_words = T{string.char(0x81,0x69),string.char(0x81,0x99),string.char(0x81,0x9A),'CP500p','2100p','ML0-20/15m','New2025','V0toV25','3M/run','3M/hour','Aeonic Weapon*.*Mind','2100/20M','T1T2T3T4','3 Area Clear Mind','OdysseyNM','DYD W3','Dynamis*.*Buy?','unity.Master','43K+','Ambuscade*.*10M/run','DYDW3Clear.HTBC.VD.do you need it?buy?','OmenOdysseySeg11k','DYDW3Clear'}
+local black_listed_words = T{string.char(0x81,0x69),string.char(0x81,0x99),string.char(0x81,0x9A),'CP500p','2100p','ML0-20/15m','New2025','V0toV25','3M/run','3M/hour','Aeonic Weapon*.*Mind','2100/20M','T1T2T3T4','3 Area Clear Mind','OdysseyNM','DYD W3','Dynamis*.*Buy?','unity.Master','43K+','Ambuscade*.*10M/run','DYDW3Clear.HTBC.VD.do you need it?buy?','OmenOdysseySeg11k','DYDW3Clear','Sortie40k+'}
 -- Filters an item use message if it matches any of the IDs below, and the books option is enabled in settings.
 local black_listed_skill_pages = T{'6147','6148','6149','6150','6151','6152','6153','6154','6155','6156','6157','6158','6159','6160','6161','6162','6163','6164','6165','6166','6167','6168','6169','6170','6171','6172','6173','6174','6175','6176','6177','6178','6179','6180','6181','6182','6183','6184','6185'}
 
