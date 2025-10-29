@@ -4,6 +4,19 @@
         <autoupdate>true</autoupdate>
         <blist>true</blist>
         <books>true</books>
+        <custom_blist>
+
+        </custom_blist>
+        <custom_words>
+
+        </custom_words>
         <rmt>true</rmt>
+        <update_interval>15</update_interval>
     </global>
+    <alixa>
+        <update_interval>20</update_interval>
+    </alixa>
+    <daleterrence>
+        <update_interval>5</update_interval>
+    </daleterrence>
 </settings>
