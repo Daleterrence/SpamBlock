@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.4.75'
+_addon.version = '1.5.00'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'}
 
@@ -163,11 +163,61 @@ register_event('load', function()
         end
     end, 0)
 end)
+local blacklist
 
 add_to_chat(36, ('['):color(36)..('SpamBlock'):color(38)..('] '):color(36)..('Addon successfully loaded.'):color(36))
 
+-- Wildcard matching because I'm tired of writing the same names over and over with a slight change
+local function _normalize_name(value)
+    if value == nil then return '' end
+    return tostring(value):lower()
+end
+
+local function _name_matches_pattern(name, pattern)
+    local n = _normalize_name(name)
+    local p = _normalize_name(pattern)
+    if p == '' then return false end
+
+    local wildcard_start = (p:sub(1, 1) == '*')
+    local wildcard_end = (p:sub(-1) == '*')
+
+    if wildcard_start then p = p:sub(2) end
+    if wildcard_end then p = p:sub(1, -2) end
+    if p == '' then return false end
+
+    if wildcard_start and wildcard_end then
+        return n:find(p, 1, true) ~= nil
+    end
+    if wildcard_start then
+        return (#p <= #n) and (n:sub(-#p) == p)
+    end
+    if wildcard_end then
+        return (#p <= #n) and (n:sub(1, #p) == p)
+    end
+    return n == p
+end
+
+local function _name_in_blacklist(name, list)
+    if not list then return false end
+    for _, pattern in ipairs(list) do
+        if _name_matches_pattern(name, pattern) then
+            return true
+        end
+    end
+    return false
+end
+
+local function _is_sender_blacklisted(name)
+    if _name_in_blacklist(name, blacklist) then
+        return true
+    end
+
+-- Custom blacklist behavior is intentionally exact-match only (no wildcards)
+    return settings.custom_blist and settings.custom_blist:contains(name)
+end
+
 -- Filtered characters you will not see in any chat if blist option is enabled in settings.
-local blacklist = T{'Aboschitt','Aeoniczaca','Aeonicduuu','Aeoniczzzcq','Aeoniczazzza','Attkins','Bahcun','Bazzarcat','Boamna','Chirich','Comedie','Criofan','Deshutzn','Jamiei','Justchao','Kettica','Killera','Killerfa','Killerfd','Killerfg','Lowesquadone','Noke','Pangge','Panggeb','Pockit','Thanatoss','Woohooc','Wooohoo','Xxzagorun','Xxzzgorun','Yagwica','Yagwicb','Yagwicc','Yagwicd','Yagwice','Yagwicf','Yagwicg','Yagwich','Yagwici','Yagwicj','Yagwick','Yagwicl','Yagwicm','Yagwicn','Yagwico','Yagwicp','Yagwicq','Yagwicr','Yagwics','Yagwict','Yagwicu','Yagwicv','Yagwicw','Yagwicx','Yagwicy','Yagwicz'}
+blacklist = T{'Aboschitt','Aeonic*','Attkins','Bahcun','Bazzarcat','Boamna','Chirich','Comedie','Criofan','Deshutzn','Jamiei','Justchao','Kettica','Killera','Killerfa','Killerfd','Killerfg','Lowesquadone','Noke','Pangge','Panggeb','Pockit','Thanatoss','Woohooc','Wooohoo','Xxzagorun','Xxzzgorun','Yagwic*'}
 -- Filters a shout or yell if they contain any of these strings, if the rmt option is enabled in settings.
 local black_listed_words = T{string.char(0x81,0x69),string.char(0x81,0x99),string.char(0x81,0x9A),'CP500p','2100p','ML0-20/15m','New2025','V0toV25','3M/run','3M/hour','Aeonic Weapon*.*Mind','2100/20M','T1T2T3T4','3 Area Clear Mind','OdysseyNM','DYD W3','Dynamis*.*Buy?','unity.Master','43K+','Ambuscade*.*10M/run','DYDW3Clear.HTBC.VD.do you need it?buy?','OmenOdysseySeg11k','DYDW3Clear','Sortie40k+','50mil Time Remaining','80,85.90'}
 -- Filters an item use message if it matches any of the IDs below, and the books option is enabled in settings.
@@ -179,7 +229,7 @@ register_event('incoming chunk', function(id, data)
         local chat = packets.parse('incoming', data)
         local cleaned = convert_auto_trans(chat['Message']):lower()
 
-        if (blacklist:contains(chat['Sender Name']) or settings.custom_blist:contains(chat['Sender Name'])) and settings.blist then
+        if settings.blist and _is_sender_blacklisted(chat['Sender Name']) then
             return true
         end
 
@@ -257,7 +307,7 @@ windower.register_event('addon command', function(command, ...)
         local name = args[1]
         local already = false
         for _, v in ipairs(settings.custom_blist) do
-            if v:lower() == name:lower() then
+            if _normalize_name(v) == _normalize_name(name) then
                 already = true
                 break
             end
@@ -275,7 +325,7 @@ windower.register_event('addon command', function(command, ...)
         local name = args[1]
         local removed = false
         for i, v in ipairs(settings.custom_blist) do
-            if v:lower() == name:lower() then
+            if _normalize_name(v) == _normalize_name(name) then
                 table.remove(settings.custom_blist, i)
                 removed = true
                 break
