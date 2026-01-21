@@ -1,5 +1,5 @@
 _addon.name = 'SpamBlock'
-_addon.version = '1.5.00'
+_addon.version = '1.5.10'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'}
 
@@ -217,7 +217,7 @@ local function _is_sender_blacklisted(name)
 end
 
 -- Filtered characters you will not see in any chat if blist option is enabled in settings.
-blacklist = T{'Aboschitt','Aeonic*','Attkins','Bahcun','Bazzarcat','Boamna','Chirich','Comedie','Criofan','Deshutzn','Jamiei','Justchao','Kettica','Killera','Killerfa','Killerfd','Killerfg','Lowesquadone','Noke','Pangge','Panggeb','Pockit','Thanatoss','Woohooc','Wooohoo','Xxzagorun','Xxzzgorun','Yagwic*'}
+blacklist = T{'Aboschitt','Aeonic*','Attkins','Bahcun','Bazzarcat','Boamna','Chirich','Comedie','Criofan','Deshutzn','Jamiei','Justchao','Kettica','Killera','Killerfa','Killerfd','Killerfg','Lowesquadone','Noke','Pangge','Panggeb','Pockit','Thanatoss','Woohooc','Wooohoo','Xxzagorun','Xxzzgorun','Yagwic*','Leonardocapri'}
 -- Filters a shout or yell if they contain any of these strings, if the rmt option is enabled in settings.
 local black_listed_words = T{string.char(0x81,0x69),string.char(0x81,0x99),string.char(0x81,0x9A),'CP500p','2100p','ML0-20/15m','New2025','V0toV25','3M/run','3M/hour','Aeonic Weapon*.*Mind','2100/20M','T1T2T3T4','3 Area Clear Mind','OdysseyNM','DYD W3','Dynamis*.*Buy?','unity.Master','43K+','Ambuscade*.*10M/run','DYDW3Clear.HTBC.VD.do you need it?buy?','OmenOdysseySeg11k','DYDW3Clear','Sortie40k+','50mil Time Remaining','80,85.90'}
 -- Filters an item use message if it matches any of the IDs below, and the books option is enabled in settings.
