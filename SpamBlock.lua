@@ -1,5 +1,35 @@
+--[[
+
+Copyright © 2026, DTR, Chiaia, Lili
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of this addon nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+]]
+
 _addon.name = 'SpamBlock'
-_addon.version = '1.5.15'
+_addon.version = '1.5.25'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'}
 
@@ -217,7 +247,7 @@ local function _is_sender_blacklisted(name)
 end
 
 -- Filtered characters you will not see in any chat if blist option is enabled in settings.
-blacklist = T{'Aboschitt','Aeonic*','Attkins','Bahcun','Bazzarcat','Boamna','Chirich','Comedie','Criofan','Deshutzn','Jamiei','Justchao','Kettica','Killera','Killerfa','Killerfd','Killerfg','Lowesquadone','Noke','Pangge','Panggeb','Pockit','Thanatoss','Woohooc','Wooohoo','Xxzagorun','Xxzzgorun','Yagwic*','Leonardodicapri'}
+blacklist = T{'Aboschitt','Aeonic*','Attkins','Bahcun','Bazzarcat','Boamna','Chirich','Comedie','Criofan','Deshutzn','Jamiei','Justchao','Kettica','Killera','Killerfa','Killerfd','Killerfg','Lowesquadone','Noke','Pangge','Panggeb','Pudwanker','Pockit','Thanatoss','Woohooc','Wooohoo','Xxzagorun','Xxzzgorun','Yagwic*','Leonardodicapri'}
 -- Filters a shout or yell if they contain any of these strings, if the rmt option is enabled in settings.
 local black_listed_words = T{string.char(0x81,0x69),string.char(0x81,0x99),string.char(0x81,0x9A),'CP500p','2100p','ML0-20/15m','New2025','V0toV25','3M/run','3M/hour','Aeonic Weapon*.*Mind','2100/20M','T1T2T3T4','3 Area Clear Mind','OdysseyNM','DYD W3','Dynamis*.*Buy?','unity.Master','43K+','Ambuscade*.*10M/run','DYDW3Clear.HTBC.VD.do you need it?buy?','OmenOdysseySeg11k','DYDW3Clear','Sortie40k+','50mil Time Remaining','80,85.90'}
 -- Filters an item use message if it matches any of the IDs below, and the books option is enabled in settings.
