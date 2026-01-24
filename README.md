@@ -1,7 +1,10 @@
 # SpamBlock
 A Windower 4 addon to make yell chat usable. Originally "[FuckOff](https://github.com/Chiaia/Windower-4-Addons/blob/main/fuckoff/fuckoff.lua)" by Chiaia.
 
-## Latest Major Version Changes: 1.4
+## Latest Changes: 1.5
+- Built in blacklist now supports wildcards to handle RMT that constantly keep the same name in part.
+
+## Version Changes: 1.4
 * The auto-updating code has been improved, no longer triggering on Windower events and now running on a configurable timer. The overhead on updates has also been reduced, as checks now only grab the start of the file to see if there is a new version instead of the entire thing. I've tried my best to make sure the auto-update is as lightweight as possible so please do make an issue if you find any problems.
 * A custom blacklist and word filter have been added, which can be added to or removed with addon commands.
 * The addon finally has addon commands, please type //sbl help in game with the addon loaded, or see below for a list of these. 
