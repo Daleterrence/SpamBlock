@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ]]
 
 _addon.name = 'SpamBlock'
-_addon.version = '1.5.80'
+_addon.version = '1.5.85'
 _addon.author = 'DTR, original code by Chiaia'
 _addon.commands = {'sbl','spamblock'}
 
@@ -82,25 +82,166 @@ local function compare_versions(a, b)
 end
 
 -- Auto-updating check
+local update_in_progress = false
+
+-- Non-blocking HTTPS GET. Must run inside a scheduled coroutine: every socket
+-- operation uses a zero timeout and yields between polls, so the game thread
+-- never blocks on network I/O even when GitHub is unreachable.
+local function async_https_get(host, path, timeout_s)
+    local ok_socket, socket = pcall(require, 'socket')
+    local ok_ssl, ssl = pcall(require, 'ssl')
+    if not ok_socket or not ok_ssl then
+        return nil, 'missing libraries'
+    end
+
+    local deadline = os.clock() + (timeout_s or 10)
+
+    -- DNS resolution has no non-blocking API; it is near-instant when the
+    -- resolver is reachable and fails fast when the network is fully down.
+    local ip = socket.dns.toip(host)
+    if not ip then
+        return nil, 'DNS lookup failed'
+    end
+
+    local sock = socket.tcp()
+    if not sock then
+        return nil, 'socket creation failed'
+    end
+    sock:settimeout(0)
+
+    while true do
+        local ret, err = sock:connect(ip, 443)
+        if ret or err == 'already connected' then break end
+        if err ~= 'timeout' and err ~= 'Operation already in progress' then
+            sock:close()
+            return nil, 'connect failed (' .. tostring(err) .. ')'
+        end
+        if os.clock() > deadline then
+            sock:close()
+            return nil, 'connect timed out'
+        end
+        coroutine.sleep(0.05)
+    end
+
+    local conn = ssl.wrap(sock, {
+        mode = 'client',
+        protocol = 'any',
+        options = {'all', 'no_sslv2', 'no_sslv3'},
+        verify = 'none',
+    })
+    if not conn then
+        sock:close()
+        return nil, 'ssl wrap failed'
+    end
+    conn:settimeout(0)
+    pcall(conn.sni, conn, host)
+
+    while true do
+        local ok, err = conn:dohandshake()
+        if ok then break end
+        if err ~= 'wantread' and err ~= 'wantwrite' and err ~= 'timeout' then
+            conn:close()
+            return nil, 'ssl handshake failed (' .. tostring(err) .. ')'
+        end
+        if os.clock() > deadline then
+            conn:close()
+            return nil, 'ssl handshake timed out'
+        end
+        coroutine.sleep(0.05)
+    end
+
+    -- HTTP/1.0 with Connection: close keeps the response un-chunked and
+    -- terminated by the server closing the socket.
+    local request = ('GET %s HTTP/1.0\r\nHost: %s\r\nUser-Agent: SpamBlock/%s\r\nConnection: close\r\n\r\n'):format(path, host, tostring(_addon.version))
+    local sent_to = 0
+    while sent_to < #request do
+        local sent, err, partial_to = conn:send(request, sent_to + 1)
+        if sent then
+            sent_to = sent
+        elseif err == 'wantread' or err == 'wantwrite' or err == 'timeout' then
+            sent_to = partial_to or sent_to
+            if os.clock() > deadline then
+                conn:close()
+                return nil, 'send timed out'
+            end
+            coroutine.sleep(0.05)
+        else
+            conn:close()
+            return nil, 'send failed (' .. tostring(err) .. ')'
+        end
+    end
+
+    local chunks = {}
+    while true do
+        local data, err, partial = conn:receive(8192)
+        if data then
+            chunks[#chunks + 1] = data
+        else
+            if partial and #partial > 0 then
+                chunks[#chunks + 1] = partial
+            end
+            if err == 'closed' then
+                break
+            end
+            if err ~= 'wantread' and err ~= 'wantwrite' and err ~= 'timeout' then
+                conn:close()
+                return nil, 'receive failed (' .. tostring(err) .. ')'
+            end
+            if os.clock() > deadline then
+                conn:close()
+                return nil, 'receive timed out'
+            end
+            coroutine.sleep(0.05)
+        end
+    end
+    conn:close()
+
+    local response = table.concat(chunks)
+    local status = tonumber(response:match('^HTTP/%d%.%d (%d%d%d)'))
+    local header_end = select(2, response:find('\r\n\r\n', 1, true))
+    if not status or not header_end then
+        return nil, 'malformed response'
+    end
+    if status ~= 200 then
+        return nil, 'HTTP status ' .. status
+    end
+
+    local headers = response:sub(1, header_end)
+    local body = response:sub(header_end + 1)
+    local content_length = tonumber(headers:lower():match('content%-length:%s*(%d+)'))
+    if content_length and #body ~= content_length then
+        return nil, 'truncated response'
+    end
+    return body
+end
+
 function check_for_update(manual, force)
     if not settings.autoupdate and not manual then return end
     if not force and _addon.version:endswith('dev') then return end
     if not manual and os.time() - last_update_check < 600 then return end
-    last_update_check = os.time()
 
     local prefix = ('['):color(36)..('SpamBlock'):color(38)..('] '):color(36)
 
+    if update_in_progress then
+        if manual then
+            add_to_chat(36, prefix .. 'An update check is already in progress.')
+        end
+        return
+    end
+    last_update_check = os.time()
+
     -- Handling incase someone's Windower install is borked
-    local ok_ltn12, ltn12 = pcall(require, 'ltn12')
-    local ok_https, https = pcall(require, 'ssl.https')
-    if not ok_ltn12 or not ok_https or not https then
+    local ok_socket = pcall(require, 'socket')
+    local ok_ssl = pcall(require, 'ssl')
+    if not ok_socket or not ok_ssl then
         if manual then
             add_to_chat(123, prefix .. 'Update check failed. Your Windower installation is missing required libraries.')
         end
         return
     end
 
-    local version_url = "https://raw.githubusercontent.com/Daleterrence/SpamBlock/main/SpamBlock.lua"
+    local host = "raw.githubusercontent.com"
+    local remote_path = "/Daleterrence/SpamBlock/main/SpamBlock.lua"
     local version_pattern = "_addon.version%s*=%s*['\"](.-)['\"]"
     local file_path = addon_path .. "SpamBlock.lua"
 
@@ -108,25 +249,19 @@ function check_for_update(manual, force)
         add_to_chat(36, prefix .. 'Checking for updates...')
     end
 
+    update_in_progress = true
     coroutine.schedule(function()
-        local buffer = {}
-        local _, code = https.request{
-            url = version_url,
-            method = "GET",
-            headers = { ['User-Agent'] = 'SpamBlock/' .. tostring(_addon.version), Range = "bytes=0-2047" },
-            sink = ltn12.sink.table(buffer)
-        }
+        local body = async_https_get(host, remote_path, 10)
+        update_in_progress = false
 
-        if code ~= 200 and code ~= 206 then
+        if not body then
             if manual then
                 add_to_chat(123, prefix .. 'Update check failed. Unable to reach GitHub.')
             end
             return
         end
 
-    local body = table.concat(buffer)
-    local remote_version = body:match(version_pattern)
-
+        local remote_version = body:match(version_pattern)
         if not remote_version then
             if manual then add_to_chat(123, prefix .. 'Update check failed. Unable to read GitHub version.') end
             return
@@ -145,35 +280,20 @@ function check_for_update(manual, force)
                 add_to_chat(36, prefix .. ('New version found (v%s), updating from v%s.'):format(remote_version, _addon.version))
             end
 
-            local file_buffer = {}
-            local _, full_code = https.request{
-                url = version_url,
-                method = "GET",
-                headers = { ['User-Agent'] = 'SpamBlock/' .. tostring(_addon.version) },
-                sink = ltn12.sink.table(file_buffer)
-            }
+            -- Sanity checking to prevent network issues breaking the addon
+            if #body < 1000 then
+                add_to_chat(123, prefix .. ('Update aborted! The downloaded file is too small. Please try again with'):color(123).. ('//sbl update'):color(206))
+                return
+            end
 
-            if full_code == 200 then
-                local file_data = table.concat(file_buffer)
-
-                -- Sanity checking to prevent network issues breaking the addon
-                if #file_data < 1000 then
-                    add_to_chat(123, prefix .. ('Update aborted! The downloaded file is too small. Please try again with'):color(123).. ('//sbl update'):color(206))
-                    return
-                end
-
-                local f = io.open(file_path, "w")
-                if f then
-                    f:write(file_data)
-                    f:close()
-                    add_to_chat(36, prefix .. 'Update successful, reloading...')
-                    send_command('@wait 0.5;lua reload ' .. _addon.name)
-                    return
-                else
-                    add_to_chat(123, prefix .. ('Update failed. Cannot write: '):color(123).. file_path)
-                end
+            local f = io.open(file_path, "wb")
+            if f then
+                f:write(body)
+                f:close()
+                add_to_chat(36, prefix .. 'Update successful, reloading...')
+                send_command('@wait 0.5;lua reload ' .. _addon.name)
             else
-                add_to_chat(123, prefix .. 'Update failed. Github cannot be reached at this time.')
+                add_to_chat(123, prefix .. ('Update failed. Cannot write: '):color(123).. file_path)
             end
         elseif manual then
             add_to_chat(36, prefix .. ('You are running the latest version (v%s).'):format(_addon.version))
